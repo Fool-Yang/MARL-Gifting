@@ -1,7 +1,9 @@
 import games
 from MCFS import *
 from time import time
-from parameters import *
+
+experiments = 1
+iterations = 2000
 
 # list of game classes to create game objects
 Games = (
