@@ -116,7 +116,7 @@ class MonteCarloForest:
                     if is_expanded:
                         no_one_expanded = False
                 # tic the game forward using the actions of each agent
-                game_running, rewards = game_copy.tic(actions)
+                game_running, rewards = game_copy.step(actions)
                 # add intermediate reward to the stats
                 for agent_id in active_agents:
                     current[agent_id].backup(rewards[agent_id])
@@ -170,6 +170,6 @@ class MonteCarloForest:
         game_running = True
         while game_running:
             actions = [np.random.choice(legal) for legal in game.get_legal_actions()]
-            game_running, rewards = game.tic(actions)
+            game_running, rewards = game.step(actions)
             total_rewards += np.array(rewards)
         return total_rewards

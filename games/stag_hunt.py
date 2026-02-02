@@ -1,16 +1,17 @@
-class Game:
+from .game import Game
 
-    def __init__(self):
+class StagHunt(Game):
+
+    name = "stag_hunt"
+
+    def __init__(self, max_t=1):
         self.players = [0, 1]
-        return
-
-    """
-    Get game and player ids
-    Return:
-        a list of player's id
-    """
-    def get_ids(self):
-        return self.players
+        self.t = 0
+        self.max_t = max_t
+        self.reward_matrix = (
+            ((1, 1), (0.1, 0.8)),
+            ((0.8, 0.1), (0.5, 0.5))
+        )
 
     """
     Get legal actions for each player
@@ -18,33 +19,20 @@ class Game:
         lists of actions for each player
     """
     def get_legal_actions(self):
-        # (stag, hare) = (0, 1)
+        # (stag, hare)
         return [(0, 1) for player in self.players]
 
     """
     Move the game to the next turn
     Args:
-        moves: a list of moves the players will make
+        actions: a list of actions the players will make
     Return:
         whether the game is running and the rewards list
     """
-    def tic(self, moves):
-        rewards = [0, 0]
-        if moves[0] == 0:
-            if moves[1] == 0:
-                rewards[0] = 1
-                rewards[1] = 1
-            else:
-                rewards[0] = 0.1
-                rewards[1] = 0.8
-        else:
-            if moves[1] == 0:
-                rewards[0] = 0.8
-                rewards[1] = 0.1
-            else:
-                rewards[0] = 0.5
-                rewards[1] = 0.5
-        return False, rewards
+    def step(self, actions):
+        rewards = self.reward_matrix[actions[0]][actions[1]]
+        self.t += 1
+        return self.t < self.max_t, rewards
 
     """
     Copy the game
@@ -52,4 +40,6 @@ class Game:
         a deep copy of the game
     """
     def copy(self):
-        return Game()
+        game_copy = StagHunt(max_t=self.max_t)
+        game_copy.t = self.t
+        return StagHunt()

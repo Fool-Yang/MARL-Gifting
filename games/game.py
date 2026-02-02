@@ -1,17 +1,19 @@
-from .game import Game
+class Game:
 
-class Prisoners(Game):
-
-    name = "prisoners"
+    name = "game"
 
     def __init__(self, max_t=1):
-        self.players = [0, 1]
+        self.players = []
         self.t = 0
         self.max_t = max_t
-        self.reward_matrix = (
-            ((2, 2), (0, 3)),
-            ((3, 0), (1, 1))
-        )
+
+    """
+    Get game and player ids
+    Return:
+        a list of player's id
+    """
+    def get_ids(self):
+        return self.players
 
     """
     Get legal actions for each player
@@ -19,8 +21,7 @@ class Prisoners(Game):
         lists of actions for each player
     """
     def get_legal_actions(self):
-        # (cooperate, betray)
-        return [(0, 1) for player in self.players]
+        return [[] for player in self.players]
 
     """
     Move the game to the next turn
@@ -30,7 +31,7 @@ class Prisoners(Game):
         whether the game is running and the rewards list
     """
     def step(self, actions):
-        rewards = self.reward_matrix[actions[0]][actions[1]]
+        rewards = [0, 0]
         self.t += 1
         return self.t < self.max_t, rewards
 
@@ -40,6 +41,6 @@ class Prisoners(Game):
         a deep copy of the game
     """
     def copy(self):
-        game_copy = Prisoners(max_t=self.max_t)
+        game_copy = Game(max_t=self.max_t)
         game_copy.t = self.t
-        return Prisoners()
+        return game_copy
