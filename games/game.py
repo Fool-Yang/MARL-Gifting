@@ -4,8 +4,8 @@ class Game:
 
     def __init__(self, max_t=1):
         self.players = []
-        self.t = 0
         self.max_t = max_t
+        self.t = 0
 
     """
     Get game and player ids
@@ -34,13 +34,3 @@ class Game:
         rewards = [0, 0]
         self.t += 1
         return self.t < self.max_t, rewards
-
-    """
-    Copy the game
-    Return:
-        a deep copy of the game
-    """
-    def copy(self):
-        game_copy = Game(max_t=self.max_t)
-        game_copy.t = self.t
-        return game_copy

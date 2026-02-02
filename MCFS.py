@@ -1,5 +1,6 @@
 import numpy as np
 from math import log as ln
+from copy import deepcopy
 
 class Node:
 
@@ -95,7 +96,7 @@ class MonteCarloForest:
         # for each iteration
         for t in range(1, iteration + 1):
             # make a copy of the game to run the simulation
-            game_copy = self.game.copy()
+            game_copy = deepcopy(self.game)
             # set the current node of each agent
             current = {agent_id: self.roots[agent_id] for agent_id in active_agents}
             # run the game until a new node is created
