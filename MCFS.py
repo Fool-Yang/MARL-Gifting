@@ -65,9 +65,11 @@ class Node:
 
 class MonteCarloForest:
 
-    # stats recording is only available for single stage games (or turn one for extensive form games)
+    # stats recording is only available for normal form games (or turn one for extensive form games)
     def __init__(self, game, recording=False):
         self.game = game
+        self.roots = {agent_id: Node(None, None) for agent_id in game.get_ids()}
+        # record stats
         self.recording = recording
         if recording:
             self.W = {}
@@ -80,9 +82,6 @@ class MonteCarloForest:
                 for action in actions:
                     self.W[agent_id][action] = []
                     self.N[agent_id][action] = []
-        self.roots = {}
-        for agent_id in game.get_ids():
-            self.roots[agent_id] = Node(None, None)
 
     """
     Monte Carlo Forest Search for many iterations
@@ -99,22 +98,22 @@ class MonteCarloForest:
             game_copy = deepcopy(self.game)
             # set the current node of each agent
             current = {agent_id: self.roots[agent_id] for agent_id in active_agents}
-            # run the game until a new node is created
+            # run the game until the game ends or a new node is created
             game_running = True
             no_one_expanded = True
             while game_running and no_one_expanded:
                 copy_active_agents = game_copy.get_ids()
-                actions = [None]*len(copy_active_agents)
                 legal_actions = game_copy.get_legal_actions()
+                actions = [None]*len(copy_active_agents)
                 # for each agent
                 for i, agent_id in enumerate(copy_active_agents):
-                    # select the action to explore
-                    is_expanded, node = current[agent_id].select(legal_actions[i], t)
+                    # select an action to explore
+                    expanded, node = current[agent_id].select(legal_actions[i], t)
                     actions[i] = node.action
                     # update the agent's current position in its tree
                     current[agent_id] = node
                     node.n += 1
-                    if is_expanded:
+                    if expanded:
                         no_one_expanded = False
                 # tic the game forward using the actions of each agent
                 game_running, rewards = game_copy.step(actions)
