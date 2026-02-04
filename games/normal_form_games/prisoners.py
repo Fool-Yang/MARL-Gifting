@@ -3,6 +3,7 @@ from .normal_form_game import NormalFormGame
 class Prisoners(NormalFormGame):
 
     name = "prisoners"
+    action_names = (("coop", "betray"), ("coop", "betray"))
 
     def __init__(self, max_t=1):
         self.max_t = max_t

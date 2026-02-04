@@ -1,6 +1,7 @@
 class Game:
 
     name = "game"
+    action_names = tuple()
 
     def __init__(self, max_t=1):
         self.players = []

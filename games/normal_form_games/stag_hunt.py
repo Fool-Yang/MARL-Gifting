@@ -3,6 +3,7 @@ from .normal_form_game import NormalFormGame
 class StagHunt(NormalFormGame):
 
     name = "stag_hunt"
+    action_names = (("stag", "hare"), ("stag", "hare"))
 
     def __init__(self, max_t=1):
         self.max_t = max_t
