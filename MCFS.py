@@ -126,7 +126,7 @@ class MonteCarloForest:
                 for agent_id in active_agents:
                     current[agent_id].backup(Q_values[agent_id])
             # record stats for the iteration
-            if self.recording and ("game_length" not in self.game.__dict__ or self.game.game_length < 1):
+            if self.recording and self.game.t < 1:
                 for agent_id, actions in zip(self.agents, self.legal_actions):
                     root = self.roots[agent_id]
                     for action in actions:
