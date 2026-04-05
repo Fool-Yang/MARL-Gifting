@@ -26,6 +26,8 @@ class NormalFormGame(Game):
         return self.legal_actions
 
     def step(self, actions):
-        rewards = self.reward_matrix[actions[0]][actions[1]]
+        rewards = self.reward_matrix
+        for action in actions:
+            rewards = rewards[action]
         self.t += 1
         return self.t < self.max_t, rewards
