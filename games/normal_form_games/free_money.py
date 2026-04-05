@@ -6,9 +6,8 @@ class FreeMoney(NormalFormGame):
     action_names = (("no", "yes"), ("no", "yes"))
 
     def __init__(self, max_t=1):
-        self.max_t = max_t
         self.reward_matrix = (
             ((0, 0), (0, 0)),
             ((0, 0), (1, 1))
         )
-        super().__init__()
+        super().__init__(max_t)

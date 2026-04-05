@@ -2,10 +2,14 @@ from ..game import Game
 
 class NormalFormGame(Game):
 
-    def __init__(self):
+    """
+    This __init__ should be called by subclasses at the end of their own __init__.
+    """
+    def __init__(self, max_t=1):
         dim = self._dim(self.reward_matrix)
         self.players = tuple(range(dim[-1]))
         self.legal_actions = tuple(tuple(range(dim[i])) for i in range(len(dim) - 1))
+        self.max_t = max_t
         self.t = 0
 
     """

@@ -6,9 +6,8 @@ class StagHunt(NormalFormGame):
     action_names = (("stag", "hare"), ("stag", "hare"))
 
     def __init__(self, max_t=1):
-        self.max_t = max_t
         self.reward_matrix = (
             ((1, 1), (0.1, 0.8)),
             ((0.8, 0.1), (0.5, 0.5))
         )
-        super().__init__()
+        super().__init__(max_t)
