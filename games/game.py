@@ -32,6 +32,6 @@ class Game:
         whether the game is running and the rewards list
     """
     def step(self, actions):
-        rewards = [0 for player in self.players]
+        rewards = [0, 0]
         self.t += 1
         return self.t < self.max_t, rewards
