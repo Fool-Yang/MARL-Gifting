@@ -13,6 +13,7 @@ class Node:
         # MCTS stats
         self.w = 0
         self.n = 0
+        self.q = 0
 
     """
     Select a child node based on the stats
@@ -30,15 +31,27 @@ class Node:
             try:
                 # calculate Q-values using stats of the child node for that action
                 child = self.children[action]
-                q_values[i] = child.w/child.n
+                q_values[i] = child.q
             except KeyError:
                 # action has no corresponding child node yet; create one
                 return (True, self.expand(action))
         # pi is a distribution of actions based on the Q-values
-        raised = np.exp(q_values*ln(iteration_count))
-        pi = raised/np.sum(raised)
+        pi = self.get_pi(q_values, iteration_count)
         # sample an action from pi
         return (False, self.children[np.random.choice(legal_actions, p=pi)])
+
+    """
+    Compute the policy based on the Q-values
+    Args:
+        q_values: a list of the Q-values, one for each action
+        iteration_count: the current MCFS iteration number
+    Return:
+        the policy pi
+    """
+    def get_pi(self, q_values, iteration_count):
+        raised = np.exp(q_values*ln(iteration_count))
+        pi = raised/np.sum(raised)
+        return pi
 
     """
     Expand the node (add a new child)
@@ -61,6 +74,7 @@ class Node:
         curr = self
         while curr is not None:
             curr.w += reward
+            curr.q = curr.w/curr.n
             curr = curr.parent
 
 class MonteCarloForest:
@@ -72,16 +86,16 @@ class MonteCarloForest:
         # record stats
         self.recording = recording
         if recording:
-            self.W = {}
-            self.N = {}
+            self.Q = {}
+            self.P = {}
             self.agents = game.get_ids()
             self.legal_actions = game.get_legal_actions()
             for agent_id, actions in zip(self.agents, self.legal_actions):
-                self.W[agent_id] = {}
-                self.N[agent_id] = {}
+                self.Q[agent_id] = {}
+                self.P[agent_id] = {}
                 for action in actions:
-                    self.W[agent_id][action] = []
-                    self.N[agent_id][action] = []
+                    self.Q[agent_id][action] = []
+                    self.P[agent_id][action] = []
 
     """
     Monte Carlo Forest Search for many iterations
@@ -97,7 +111,10 @@ class MonteCarloForest:
             # make a copy of the game to run the simulation
             game_copy = deepcopy(self.game)
             # set the current node of each agent
-            current = {agent_id: self.roots[agent_id] for agent_id in active_agents}
+            current = {}
+            for agent_id in active_agents:
+                current[agent_id] = self.roots[agent_id]
+                current[agent_id].n += 1
             # run the game until the game ends or a new node is created
             game_running = True
             no_one_expanded = True
@@ -122,40 +139,53 @@ class MonteCarloForest:
                     current[agent_id].backup(rewards[agent_id])
             # evaluate the current game state for backpropagation
             if game_running:
-                Q_values = self.evaluate(game_copy)
+                q_values = self.evaluate(game_copy)
                 for agent_id in active_agents:
-                    current[agent_id].backup(Q_values[agent_id])
+                    current[agent_id].backup(q_values[agent_id])
             # record stats for the iteration
             if self.recording and self.game.t < 1:
                 for agent_id, actions in zip(self.agents, self.legal_actions):
                     root = self.roots[agent_id]
-                    for action in actions:
+                    q_values = np.zeros(len(actions))
+                    empirical_distribution = [0]*len(actions)
+                    # for each legal action
+                    for i, action in enumerate(actions):
                         try:
-                            self.W[agent_id][action].append(root.children[action].w)
-                            self.N[agent_id][action].append(root.children[action].n)
+                            # calculate Q-values using stats of the child node for that action
+                            child = root.children[action]
+                            q_values[i] = child.q
+                            empirical_distribution[i] = root.children[action].n/root.n
                         except KeyError:
-                            # root.children[action] not created yet
-                            self.W[agent_id][action].append(0)
-                            self.N[agent_id][action].append(0)
+                            # action has no corresponding child node yet
+                            q_values[i] = 0
+                            empirical_distribution[i] = 0
+                    for i, action in enumerate(actions):
+                        self.Q[agent_id][action].append(q_values[i])
+                        self.P[agent_id][action].append(empirical_distribution[i])
         # choose an action after all search iterations are done
         best_actions = [None]*len(active_agents)
-        best_values = [float("-inf")]*len(active_agents)
         legal_actions = self.game.get_legal_actions()
         for i, agent_id in enumerate(active_agents):
+            actions = legal_actions[agent_id]
             root = self.roots[agent_id]
-##            print("Agent", agent_id, end=" values: ")
-            for action in legal_actions[i]:
-                child = root.children[action]
-                value = child.w/child.n
-                if value > best_values[i]:
-                    best_actions[i] = action
-                    best_values[i] = value
-##                print(round(value, 3), ':', child.n, sep='', end=' ')
-##            print()
+            pi = np.zeros(len(actions))
+            # for each legal action
+            for j, action in enumerate(actions):
+                try:
+                    # calculate Q-values using stats of the child node for that action
+                    child = root.children[action]
+                    # do not do pi[j] = child.n/root.n
+                    # because from the second level of the tree, root.n = sum([child.n]) + 1
+                    # 1 extra n when the root has no children yet
+                    pi[j] = child.n
+                except KeyError:
+                    # action has no corresponding child node yet
+                    pi[j] = 0
+            pi = pi/sum(pi)
+            best_actions[i] = np.random.choice(actions, p=pi)
             # inherit the tree for next turn
             self.roots[agent_id] = self.roots[agent_id].children[best_actions[i]]
             self.roots[agent_id].parent = None
-##        print("----------------------------------------------")
         return best_actions
 
     """
