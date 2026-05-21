@@ -2,8 +2,6 @@ from .peer_rewarding_wrapper import PeerRewardingWrapper
 from .normal_form_games.free_money import FreeMoney
 from .normal_form_games.prisoners import Prisoners
 from .normal_form_games.stag_hunt import StagHunt
-from .normal_form_games.stag_hunt_3a import StagHunt3A
-from .normal_form_games.stag_hunt_3p import StagHunt3P
 from .normal_form_games.be_nice import BeNice
 from .normal_form_games.rps import RPS
 from .normal_form_games.biased_rps import BiasedRPS
