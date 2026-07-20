@@ -3,7 +3,7 @@ from .normal_form_games.free_money import FreeMoney
 from .normal_form_games.prisoners import Prisoners
 from .normal_form_games.stag_hunt import StagHunt
 from .normal_form_games.stag_hunt_classic import StagHuntClassic
-from .normal_form_games.be_nice import BeNice
+from .normal_form_games.be_kind import BeKind
 from .normal_form_games.rps import RPS
 from .normal_form_games.biased_rps import BiasedRPS
 from .normal_form_games.shapley_rps import ShapleyRPS

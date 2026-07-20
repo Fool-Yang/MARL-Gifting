@@ -1,9 +1,9 @@
 from .normal_form_game import NormalFormGame
 
-class BeNice(NormalFormGame):
+class BeKind(NormalFormGame):
 
-    name = "be_nice"
-    action_names = (("nice", "no"), ("nice", "no"))
+    name = "be_kind"
+    action_names = (("kind", "unkind"), ("kind", "unkind"))
 
     def __init__(self, max_t=1):
         self.reward_matrix = (

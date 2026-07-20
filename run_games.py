@@ -12,12 +12,12 @@ Games = [
 ##    games.BiasedRPS,
 ##    games.FreeMoney,
 ##    games.PeerRewardingWrapper(games.FreeMoney),
-##    games.BeNice,
-##    games.PeerRewardingWrapper(games.BeNice),
+##    games.BeKind,
+##    games.PeerRewardingWrapper(games.BeKind),
 ##    games.Prisoners,
 ##    games.PeerRewardingWrapper(games.Prisoners),
-    games.StagHunt(2, 2),
-    games.PeerRewardingWrapper(games.StagHunt(2, 2)),
+##    games.StagHunt(2, 2),
+##    games.PeerRewardingWrapper(games.StagHunt(2, 2)),
 ]
 
 for game in Games:
