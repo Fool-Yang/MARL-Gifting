@@ -9,8 +9,7 @@ def PeerRewardingWrapper(game_class):
         action_names = game_class.action_names
 
         """
-        division: this is the number of portions the reward is divided into
-            to make discrete action for giving rewards, the rewards are divided into finite amount of pieces
+        division: this is the number of portions the reward is divided into (to make discrete actions)
             if we divide a reward into 10 portions, then {0, 1, ..., 10} represents giving 0%, 10%, ..., 100%
         """
         def __init__(self, division=10, *args, **kwargs):
@@ -50,6 +49,7 @@ def PeerRewardingWrapper(game_class):
         def step(self, actions):
             players = self.game.get_ids()
             rewards = [0 for player in players]
+            # alternates between the original game and the peer rewarding step
             if self.t%2:
                 sharing_pool = 0
                 for i in range(len(actions)):
