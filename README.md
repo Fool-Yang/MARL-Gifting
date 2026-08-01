@@ -1,0 +1,6 @@
+Code for the EUMAS 2026 conference paper "Peer Rewarding for Multi-Agent Coordination: Why and How".
+
+
+Abstract:<br>
+One of the central challenges in Multi-Agent Reinforcement Learning (MARL) is coordination, where agents must align their ac tions towards collectively beneficial outcomes. Peer rewarding, or gifting, has been proposed as a decentralised mechanism that promotes coopera tion by allowing agents to voluntarily transfer rewards. Previous studies showed that gifting improves coordination without changing the Nash equilibria and that agents eventually stop using the mechanism entirely, making its effectiveness counter-intuitive. This paper investigates the un derlying principle behind gifting and explains why it improves coordina tion. We provide a theoretical analysis of the learning dynamics induced by gifting and identify the classes of games where the mechanism is ef fective. We further explore its limitations through experiments in games with varying numbers of players and actions under increasing coordina tion difficulty. Our findings improve the understanding and explainability of decentralised cooperation mechanisms in MARL and clarify the con ditions under which gifting can successfully facilitate coordination.
+
