@@ -2,10 +2,14 @@ import games
 from MCFS import *
 from time import time
 
+from math import ceil
+
 experiments = 50
 # iterations must be >= the number of actions on turn one or the stats won't work
 # because you need at least one sample of each action to get the stats
 iterations = 1000
+# downsampling (no need to process every data point for plotting as the resolution is only so high)
+plot_interval = ceil(iterations//200)
 
 # list of game classes to create game objects
 Games = [
@@ -18,6 +22,8 @@ Games = [
 ##    games.PeerRewardingWrapper(games.Prisoners),
 ##    games.StagHunt(2, 2),
 ##    games.PeerRewardingWrapper(games.StagHunt(2, 2)),
+    games.StagHuntClassic,
+    games.PeerRewardingWrapper(games.StagHuntClassic),
 ]
 
 for game in Games:
@@ -55,7 +61,7 @@ for game in Games:
             Q, P = map(eval, game_run.split('\n'))
             for action in Q[agent_id]:
                 action_name = game.action_names[agent_id][action]
-                for i in range(len(Q[agent_id][action])):
+                for i in range(0, len(Q[agent_id][action]), plot_interval):
                     rows_Q.append({
                         "action": action_name,
                         "trial": trial,
@@ -76,13 +82,16 @@ for game in Games:
         fig_strategy, ax_strategy = plt.subplots()
         sns.lineplot(data=df_P, x="iteration", y="policy", hue="action", errorbar="ci", n_boot=200)
         ax_strategy.set_title(game.name + ": agent " + str(agent_id))
+        break # only plot the first agent
 plt.show()
 
+'''
+# run stag hunt with different number of players and actions
 Games = []
-##for n_players in range(2, 11):
-##    for n_actions in range(2, 11):
-##        Games.append(games.StagHunt(n_players, n_actions))
-##        Games.append(games.PeerRewardingWrapper(games.StagHunt(n_players, n_actions)))
+for n_players in range(2, 11):
+    for n_actions in range(2, 11):
+        Games.append(games.StagHunt(n_players, n_actions))
+        Games.append(games.PeerRewardingWrapper(games.StagHunt(n_players, n_actions)))
 
 for game in Games:
     record_file = "record_" + game.name + ".stats"
@@ -101,3 +110,4 @@ for game in Games:
         f.write(str(mcf.P) + '\n\n')
         f.close()
     print("Game", g.name, "ended. Total time:", time() - t0)
+'''
