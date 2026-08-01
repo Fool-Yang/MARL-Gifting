@@ -1,3 +1,4 @@
 *.pyc
 *.stats
+*.svg
 *.rep
